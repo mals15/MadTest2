@@ -43,14 +43,15 @@ public class SimpleListImpl<E> implements SimpleList<E> {
 
     @Override
     public void remove(int index) throws Exception {
-        if (index > size) {
-            System.out.println ("ндекс на ходится за пределлами массива!");
+        try{
+            for (int i=index; i < count-1; i++) {
+                elements[i] = elements[i+1];
+            }
+            elements[count-1] = null;
+            count--;
+        } catch (Exception e) {
+            System.out.println("Индекс находитс за пределами массива!");
         }
-        for (int i=index; i < count-1; i++) {
-            elements[i] = elements[i+1];
-        }
-        elements[count-1] = null;
-        count--;
     }
 
     @Override

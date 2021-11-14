@@ -7,55 +7,59 @@ import java.util.Optional;
 
 public class SimpleListImpl<E> implements SimpleList<E> {
 
-    int count;
-    int razm;
-    Object massive [];
+    private int count;
+    private int size;
+    private E[] elements;
 
     public SimpleListImpl() {
         count = 0;
-        razm = 5;
-        massive = new Object[razm];
+        size = 10;
+        elements = (E[]) new Object[size];
     }
 
     @Override
     public void add(E item) {
-        if (count == razm) {
-            razm = razm*2;
-            Object [] massive1 = new Object [razm];
-            System.arraycopy(massive, 0, massive1, 0, razm/2);
-            massive = massive1;
+        if (count == size) {
+            elements = resize(elements);
         }
-        massive[count] = item;
+        elements[count] = item;
         count++;
     }
 
     @Override
     public void insert(int index, E item) throws Exception {
-        if (count++ >= razm) {
-            razm = razm*2;
-            Object [] massive1 = new Object [razm];
-            System.arraycopy(massive, 0, massive1, 0, razm/2);
-            massive = massive1;
+        while (index > size) {
+            elements=resize(elements);
         }
-        massive[index] = item;
+        for (int i=size; i!=index; i--) {
+            if (i+1 > size){
+                elements=resize(elements);
+            }
+            elements[i+1]=elements[i];
+        }
+        elements[index] = item;
+        count++;
     }
 
     @Override
     public void remove(int index) throws Exception {
-        if (index>razm) {
-            System.out.println ("Индекс элемента для удаления находится за пределами массива!");
+        if (index > size) {
+            System.out.println ("ндекс на ходится за пределлами массива!");
         }
-        massive[index] = null;
         for (int i=index; i < count-1; i++) {
-            massive[i] = massive[i+1];
+            elements[i] = elements[i+1];
         }
-        massive[count-1] = null;
+        elements[count-1] = null;
         count--;
     }
-    @Override
 
-    public Optional get(int index) {
-        return Optional.empty();
+    @Override
+    public Optional<E> get(int index) {
+        if (index >=1 && index <= count) {
+            return Optional.ofNullable(elements[index]);
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -64,14 +68,19 @@ public class SimpleListImpl<E> implements SimpleList<E> {
     }
 
     @Override
-    public void addAll(SimpleList list) {
-
+    public void addAll(SimpleList<E> list) {
+        SimpleListImpl newSimpleListImpl = (SimpleListImpl) list;
+        while (count + newSimpleListImpl.count >= size) {
+            elements = resize(elements);
+        }
+        System.arraycopy(newSimpleListImpl.elements, 0, this.elements, count, newSimpleListImpl.count);
+        count+=newSimpleListImpl.count;
     }
 
     @Override
     public int first(E item) {
         for (int i = 0; i < count; i++) {
-            if (massive[i].equals(item)) {
+            if (elements[i].equals(item)) {
                 return i;
             }
         }
@@ -81,7 +90,7 @@ public class SimpleListImpl<E> implements SimpleList<E> {
     @Override
     public int last(E item) {
         for (int i=count; i > 0; i--) {
-            if (massive[i].equals(item)) {
+            if (elements[i].equals(item)) {
                 return i;
             }
         }
@@ -91,7 +100,7 @@ public class SimpleListImpl<E> implements SimpleList<E> {
     @Override
     public boolean contains(E item) {
         for (int i=0; i<count; i++) {
-            if( massive[i].equals(item)) {
+            if( elements[i].equals(item)) {
                 return true;
             }
         }
@@ -100,16 +109,25 @@ public class SimpleListImpl<E> implements SimpleList<E> {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return count<1;
     }
 
     @Override
-    public SimpleList suffle() {
+    public SimpleList shuffle() {
         return null;
     }
 
     @Override
-    public SimpleList sotr(Comparator comparator) {
+    public SimpleList sort(Comparator comparator) {
         return null;
+    }
+
+    private E[] resize (E[] elements) {
+        size=size+10;
+        E[] newElements = (E[]) new Object[size];
+        for (int i=0; i<elements.length; i++) {
+            newElements[i]=elements[i];
+        }
+        return newElements;
     }
 }

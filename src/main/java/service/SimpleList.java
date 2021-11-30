@@ -15,6 +15,4 @@ public interface SimpleList <E> {
     int last(E item);
     boolean contains(E item);
     boolean isEmpty();
-    SimpleList<E> shuffle();
-    SimpleList<E> sort(Comparator<E> comparator);
 }

@@ -1,11 +1,13 @@
 package service.impl;
 
+import service.AdvancedList;
 import service.SimpleList;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Optional;
 
-public class SimpleListImpl<E> implements SimpleList<E> {
+public class SimpleListImpl<E> implements SimpleList<E>, AdvancedList<E> {
 
     private int count;
     private int size;
@@ -19,8 +21,8 @@ public class SimpleListImpl<E> implements SimpleList<E> {
 
     @Override
     public void add(E item) {
-        if (count == size) {
-            elements = resize(elements);
+        if (this.count == this.size) {
+            this.elements = resize(this.elements);
         }
         elements[count] = item;
         count++;
@@ -28,36 +30,36 @@ public class SimpleListImpl<E> implements SimpleList<E> {
 
     @Override
     public void insert(int index, E item) throws Exception {
-        while (index > size) {
-            elements=resize(elements);
+        while (index > this.size) {
+            this.elements=resize(this.elements);
         }
-        for (int i=size; i!=index; i--) {
-            if (i+1 > size){
-                elements=resize(elements);
+        for (int i=this.size; i!=index; i--) {
+            if (i+1 > this.size){
+                this.elements=resize(this.elements);
             }
-            elements[i+1]=elements[i];
+            this.elements[i+1] = this.elements[i];
         }
-        elements[index] = item;
-        count++;
+        this.elements[index] = item;
+        this.count++;
     }
 
     @Override
     public void remove(int index) throws Exception {
         try{
-            for (int i=index; i < count-1; i++) {
-                elements[i] = elements[i+1];
+            for (int i=index; i < this.count-1; i++) {
+                this.elements[i] = this.elements[i+1];
             }
-            elements[count-1] = null;
-            count--;
+            this.elements[this.count-1] = null;
+            this.count--;
         } catch (Exception e) {
-            System.out.println("Индекс находитс за пределами массива!");
+            System.out.println("Индекс находится за пределами массива!");
         }
     }
 
     @Override
     public Optional<E> get(int index) {
-        if (index >=1 && index <= count) {
-            return Optional.ofNullable(elements[index]);
+        if (index >=1 && index <= this.count) {
+            return Optional.ofNullable(this.elements[index]);
         } else {
             return Optional.empty();
         }
@@ -65,23 +67,23 @@ public class SimpleListImpl<E> implements SimpleList<E> {
 
     @Override
     public int size() {
-        return count;
+        return this.count;
     }
 
     @Override
     public void addAll(SimpleList<E> list) {
         SimpleListImpl newSimpleListImpl = (SimpleListImpl) list;
-        while (count + newSimpleListImpl.count >= size) {
-            elements = resize(elements);
+        while (this.count + newSimpleListImpl.count >= this.size) {
+            this.elements = resize(this.elements);
         }
-        System.arraycopy(newSimpleListImpl.elements, 0, this.elements, count, newSimpleListImpl.count);
-        count+=newSimpleListImpl.count;
+        System.arraycopy(newSimpleListImpl.elements, 0, this.elements, this.count, newSimpleListImpl.count);
+        this.count+=newSimpleListImpl.count;
     }
 
     @Override
     public int first(E item) {
-        for (int i = 0; i < count; i++) {
-            if (elements[i].equals(item)) {
+        for (int i = 0; i < this.count; i++) {
+            if (this.elements[i].equals(item)) {
                 return i;
             }
         }
@@ -90,8 +92,8 @@ public class SimpleListImpl<E> implements SimpleList<E> {
 
     @Override
     public int last(E item) {
-        for (int i=count; i > 0; i--) {
-            if (elements[i].equals(item)) {
+        for (int i=this.count; i > 0; i--) {
+            if (this.elements[i].equals(item)) {
                 return i;
             }
         }
@@ -100,8 +102,8 @@ public class SimpleListImpl<E> implements SimpleList<E> {
 
     @Override
     public boolean contains(E item) {
-        for (int i=0; i<count; i++) {
-            if( elements[i].equals(item)) {
+        for (int i=0; i<this.count; i++) {
+            if( this.elements[i].equals(item)) {
                 return true;
             }
         }
@@ -110,22 +112,24 @@ public class SimpleListImpl<E> implements SimpleList<E> {
 
     @Override
     public boolean isEmpty() {
-        return count<1;
+        return this.count<1;
     }
 
     @Override
     public SimpleList shuffle() {
+
         return null;
     }
 
     @Override
     public SimpleList sort(Comparator comparator) {
+        Arrays.stream(this.elements).sorted(comparator).toArray();
         return null;
     }
 
     private E[] resize (E[] elements) {
-        size=size+10;
-        E[] newElements = (E[]) new Object[size];
+        this.size=this.size+10;
+        E[] newElements = (E[]) new Object[this.size];
         for (int i=0; i<elements.length; i++) {
             newElements[i]=elements[i];
         }
